@@ -1,0 +1,77 @@
+{% extends 'tracker/base.html' %}
+{% block title %}{{ pipeline.name }} · Dashboard{% endblock %}
+{% block content %}
+<div class="grid">
+  <div class="col-12 card">
+    <h1 style="margin:0 0 6px 0;">{{ pipeline.name }}</h1>
+    <div class="muted" style="margin-bottom:8px;">Project: {{ pipeline.project.name }} • Team: {{ pipeline.project.team.name }} • Org: {{ pipeline.project.team.organization.name }}</div>
+    <p style="margin-bottom:8px;">{{ pipeline.description }}</p>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div class="tag">Overall Score</div>
+      <div style="min-width:120px">{{ overall_score }}%</div>
+      <div class="progress" style="width: 300px;">
+        <div class="bar" style="width: {{ overall_score }}%"></div>
+      </div>
+      {% if latest_run %}
+        <div class="muted">Run #{{ latest_run.id }} • {{ latest_run.created_at|date:'Y-m-d H:i' }} • Status: {{ latest_run.status }}</div>
+      {% else %}
+        <div class="muted">No runs yet for this pipeline.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% for stage in stages %}
+  <div class="card col-12">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+      <div>
+        <h2 style="margin:0 0 4px 0;">{{ stage.name }}</h2>
+        <div class="muted" style="font-size:12px;">Owner Team: {{ stage.owner_team|default:'—' }} • Weight: {{ stage.weight }}</div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; min-width:280px;">
+        <div style="width:60px; text-align:right;">{{ stage.stage_completion }}%</div>
+        <div class="progress" style="flex:1;">
+          <div class="bar" style="width: {{ stage.stage_completion }}%"></div>
+        </div>
+        <div class="tag">{{ stage.status }}</div>
+      </div>
+    </div>
+
+    <table style="margin-top:10px;">
+      <thead>
+        <tr>
+          <th style="width:40%">SubStage</th>
+          <th>Owner Team</th>
+          <th style="width:15%">Weight</th>
+          <th style="width:20%">Completion</th>
+          <th style="width:15%">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ss in stage.substages %}
+        <tr>
+          <td>{{ ss.name }}</td>
+          <td class="muted">{{ ss.owner_team|default:'—' }}</td>
+          <td>{{ ss.weight }}</td>
+          <td>
+            <div class="progress" style="width: 160px;">
+              <div class="bar" style="width: {{ ss.completion }}%"></div>
+            </div>
+          </td>
+          <td><span class="tag">{{ ss.status }}</span></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="muted">No substages defined.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endfor %}
+
+  <div class="col-12" style="margin-top:8px;">
+    <a class="btn" href="/api/pipelines/{{ pipeline.id }}/trend/?n=10" target="_blank">View Trend API →</a>
+    {% if latest_run %}
+      <a class="btn" href="/api/runs/{{ latest_run.id }}/summary/" target="_blank">View Run Summary API →</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

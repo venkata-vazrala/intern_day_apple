@@ -1,0 +1,35 @@
+{
+  "pipeline_name": "Web App CI",
+  "description": "CI pipeline for web app",
+  "organization": "Web Org",
+  "team": "Web Team",
+  "project": "Web Project",
+  "stages": [
+    {
+      "name": "Build",
+      "weight": 0.3,
+      "owner_team": "Build Automation",
+      "substages": [
+        {"name": "Install Dependencies", "weight": 0.2, "definition_of_done": "Deps installed", "type": "auto", "endpoint": "/api/checks/install/", "owner_team": "Build Automation"},
+        {"name": "Bundle", "weight": 0.8, "definition_of_done": "Assets bundled", "type": "auto", "endpoint": "/api/checks/bundle/", "owner_team": "Build Automation"}
+      ]
+    },
+    {
+      "name": "Test",
+      "weight": 0.5,
+      "owner_team": "Validation",
+      "substages": [
+        {"name": "Unit Tests", "weight": 0.5, "type": "auto", "endpoint": "/api/checks/unit_tests/", "owner_team": "Validation"},
+        {"name": "E2E", "weight": 0.5, "type": "manual", "owner_team": "Validation"}
+      ]
+    },
+    {
+      "name": "Deploy",
+      "weight": 0.2,
+      "owner_team": "Deployment",
+      "substages": [
+        {"name": "Deploy to Staging", "weight": 1.0, "type": "manual", "owner_team": "Deployment"}
+      ]
+    }
+  ]
+}

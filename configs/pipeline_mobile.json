@@ -1,0 +1,27 @@
+{
+  "pipeline_name": "Mobile App Pipeline",
+  "description": "Build and test mobile app releases",
+  "organization": "Mobile Org",
+  "team": "Mobile Team",
+  "project": "Mobile Project",
+  "stages": [
+    {
+      "name": "Build",
+      "weight": 0.5,
+      "owner_team": "Build Automation",
+      "substages": [
+        {"name": "Compile", "weight": 0.6, "type": "auto", "endpoint": "/api/checks/compile/", "owner_team": "Build Automation"},
+        {"name": "Sign", "weight": 0.4, "type": "manual", "owner_team": "Build Automation"}
+      ]
+    },
+    {
+      "name": "Test",
+      "weight": 0.5,
+      "owner_team": "Validation",
+      "substages": [
+        {"name": "Unit Tests", "weight": 0.5, "type": "auto", "owner_team": "Validation"},
+        {"name": "Integration Tests", "weight": 0.5, "type": "manual", "owner_team": "Validation"}
+      ]
+    }
+  ]
+}

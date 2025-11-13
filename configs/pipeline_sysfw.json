@@ -1,0 +1,40 @@
+{
+  "pipeline_name": "FW Build Pipeline",
+  "description": "Build → Test → Deploy lifecycle for system firmware",
+  "organization": "Platform Org",
+  "team": "Firmware Team",
+  "project": "FW Project",
+  "stages": [
+    {
+      "name": "Build",
+      "weight": 0.4,
+      "owner_team": "Build Automation",
+      "type": "manual",
+      "substages": [
+        {"name": "Source Sync", "weight": 0.2, "definition_of_done": "Repo synced successfully", "type": "auto", "endpoint": "/api/checks/source_sync/", "owner_team": "Build Automation"},
+        {"name": "Compilation", "weight": 0.4, "definition_of_done": "Build completes without errors", "type": "auto", "endpoint": "/api/checks/build/", "owner_team": "Build Automation"},
+        {"name": "Binary Signing", "weight": 0.4, "definition_of_done": "Image signed successfully", "type": "manual", "owner_team": "Build Automation"}
+      ]
+    },
+    {
+      "name": "Test",
+      "weight": 0.4,
+      "owner_team": "Validation",
+      "type": "manual",
+      "substages": [
+        {"name": "Unit Tests", "weight": 0.3, "definition_of_done": "All tests passed", "type": "auto", "endpoint": "/api/checks/unit_tests/", "owner_team": "Validation"},
+        {"name": "Integration Tests", "weight": 0.7, "definition_of_done": "All integrations verified", "type": "manual", "owner_team": "Validation"}
+      ]
+    },
+    {
+      "name": "Deploy",
+      "weight": 0.2,
+      "owner_team": "Deployment",
+      "type": "manual",
+      "substages": [
+        {"name": "Artifact Upload", "weight": 0.5, "definition_of_done": "Uploaded to server", "type": "auto", "endpoint": "/api/checks/upload/", "owner_team": "Deployment"},
+        {"name": "Tag Release", "weight": 0.5, "definition_of_done": "Release tagged successfully", "type": "manual", "owner_team": "Deployment"}
+      ]
+    }
+  ]
+}
